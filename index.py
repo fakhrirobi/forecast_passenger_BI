@@ -9,7 +9,7 @@ from stats import *
 import predictive_analytics
 from predictive_analytics import * 
 
-
+server = server
 SIDEBAR_STYLE = {
     "position": "fixed",
     "top": 0,
@@ -72,6 +72,4 @@ def render_page(pathname) :
     )
 if __name__ == '__main__' : 
     
-    app.run_server(debug=True,
-                   port=1234,
-                   use_reloader=True)
+    app.run_server(debug=True)
