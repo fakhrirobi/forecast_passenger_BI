@@ -17,7 +17,7 @@ render_annual_timedata
 
 '''
 def load_data() : 
-    data = pd.read_csv('data/Air_Traffic_Passenger_Statistics.csv')
+    data = pd.read_csv('src/data/Air_Traffic_Passenger_Statistics.csv')
     data = data.replace('United Airlines - Pre 07/01/2013', 'United Airlines')
     data['Period'] = data['Activity Period'].astype('str')
     data['Period'] = pd.to_datetime(data['Period'], format='%Y%m')
