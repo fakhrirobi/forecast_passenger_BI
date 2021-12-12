@@ -2,7 +2,7 @@ import dash
 import dash_bootstrap_components as dbc 
 
 from dash import html,Input,Output,State,dcc
-from app import app
+from app import app,server
 
 import stats
 from stats import *
@@ -71,6 +71,7 @@ def render_page(pathname) :
         ]
     )
 if __name__ == '__main__' : 
+    
     app.run_server(debug=True,
                    port=1234,
                    use_reloader=True)
