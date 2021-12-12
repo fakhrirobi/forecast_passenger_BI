@@ -152,7 +152,7 @@ def render_passenger_airlines(range,data=data) :
     return fig_airlines
 #========================================PREDICTIVE ANALYTICS PAGE 
 
-passanger_data = pd.read_csv('src/src/data/passanger_total.csv',index_col='Period',parse_dates=['Period'])
+passanger_data = pd.read_csv('src/data/passanger_total.csv',index_col='Period',parse_dates=['Period'])
 def render_resampled_passanger(data = passanger_data) : 
     data = data[['Passenger Total']].resample('AS').sum()
     fig = px.line(data.sort_values(by=['Period'], ascending=[True]).reset_index(), x='Period', y='Passenger Total', template='seaborn', title='San Fransisco Airport Total Passenger ( Annually Resampled)')
