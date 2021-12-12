@@ -17,7 +17,7 @@ render_annual_timedata
 
 '''
 def load_data() : 
-    data = pd.read_csv('Air_Traffic_Passenger_Statistics.csv')
+    data = pd.read_csv('data/Air_Traffic_Passenger_Statistics.csv')
     data = data.replace('United Airlines - Pre 07/01/2013', 'United Airlines')
     data['Period'] = data['Activity Period'].astype('str')
     data['Period'] = pd.to_datetime(data['Period'], format='%Y%m')
@@ -152,7 +152,7 @@ def render_passenger_airlines(range,data=data) :
     return fig_airlines
 #========================================PREDICTIVE ANALYTICS PAGE 
 
-passanger_data = pd.read_csv('passanger_total.csv',index_col='Period',parse_dates=['Period'])
+passanger_data = pd.read_csv('data/passanger_total.csv',index_col='Period',parse_dates=['Period'])
 def render_resampled_passanger(data = passanger_data) : 
     data = data[['Passenger Total']].resample('AS').sum()
     fig = px.line(data.sort_values(by=['Period'], ascending=[True]).reset_index(), x='Period', y='Passenger Total', template='seaborn', title='San Fransisco Airport Total Passenger ( Annually Resampled)')
@@ -172,7 +172,7 @@ def render_resampled_passanger(data = passanger_data) :
         paper_bgcolor='rgba(0,0,0,0)',plot_bgcolor='rgba(0,0,0,0)'
     )
     return fig 
-decompose_ts_data = pd.read_csv('passanger_total.csv',index_col='Period',parse_dates=['Period'])
+decompose_ts_data = pd.read_csv('data/passanger_total.csv',index_col='Period',parse_dates=['Period'])
 
 def create_acf_pacf_plot(data=decompose_ts_data, plot_pacf=False):
     corr_array = pacf(data.dropna(), alpha=0.05) if plot_pacf else acf(data.dropna(), alpha=0.05)
@@ -206,7 +206,7 @@ def create_acf_pacf_plot(data=decompose_ts_data, plot_pacf=False):
 
 def render_histogram_ts_data() : 
     pd.options.plotting.backend = "plotly"
-    data = pd.read_csv('passanger_total.csv',index_col='Period',parse_dates=['Period'])
+    data = pd.read_csv('data/passanger_total.csv',index_col='Period',parse_dates=['Period'])
     data['Month'] = data.index.strftime('%b')
     data['Year'] = data.index.year
 
@@ -261,7 +261,7 @@ def cagr_passanger_per_region(range,region,data=data) :
 #Predictive Analytics Page 
 
 def render_forecast_figure(forecast_result,window_size) : 
-    origin_data= pd.read_csv('passanger_total.csv',parse_dates=['Period'])
+    origin_data= pd.read_csv('data/passanger_total.csv',parse_dates=['Period'])
     ''' 
     Parameters : 
     forecast_result = list_of values contain forecast result ( callback result)

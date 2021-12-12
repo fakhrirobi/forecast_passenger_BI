@@ -310,7 +310,7 @@ def get_forecast_step(date_value) :
 )
 def forecast_timeseries_data(forecast_step,window_size) : 
     #load model 
-    loaded_model = SARIMAXResults.load('moving_avg_diff_passenger_ovetime_model.pkl')
+    loaded_model = SARIMAXResults.load('model/moving_avg_diff_passenger_ovetime_model.pkl')
     
     # forecast using step
     forecast_result  = loaded_model.forecast(steps=forecast_step)

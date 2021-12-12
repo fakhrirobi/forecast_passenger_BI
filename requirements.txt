@@ -1,0 +1,16 @@
+requests==2.26.0
+matplotlib==3.3.4
+statsmodels==0.12.1
+dash_extensions==0.0.65
+pydantic==1.8.2
+gunicorn==20.1.0
+dash_bootstrap_components==0.13.1
+uvicorn==0.13.4
+dash==2.0.0
+joblib==1.0.0
+plotly==5.3.1
+numpy==1.19.5
+pandas==1.2.5
+fastapi==0.70.0
+python_dateutil==2.8.2
+scikit_learn==1.0.1

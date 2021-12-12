@@ -12,9 +12,9 @@ stats_basic_container_style = {'background-color':'#378dfc','color':'#fcfaff','t
 import dash_extensions as de
 options = dict(loop=True, autoplay=True, rendererSettings=dict(preserveAspectRatio='xMidYMid slice'))
 #calling object 
-year_list = joblib.load('list_year.joblib')
-geo = joblib.load('geo_region.joblib')
-operating_airline  = joblib.load('operating_airline.joblib')
+year_list = joblib.load('joblib_file_ref/list_year.joblib')
+geo = joblib.load('joblib_file_ref/geo_region.joblib')
+operating_airline  = joblib.load('joblib_file_ref/operating_airline.joblib')
 # year_list.append('All')
 from src.visualization import (render_passenger_airlines,
                                render_passenger_overtime,
