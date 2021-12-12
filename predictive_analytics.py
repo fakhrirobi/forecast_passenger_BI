@@ -429,7 +429,7 @@ def train_custom_model(p,d,q,P,D,Q,s,button_click) :
     if button_click is not None: 
         from sklearn import metrics 
         
-        data = pd.read_csv('passanger_total.csv',index_col='Period',parse_dates=['Period'])
+        data = pd.read_csv('src/data/passanger_total.csv',index_col='Period',parse_dates=['Period'])
         data = transform_dataset(data=data)
         print(data.columns)
         model = sm.tsa.SARIMAX(data['moving_avg_diff'], order=(p,d,q),
