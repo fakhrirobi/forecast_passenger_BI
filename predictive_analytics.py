@@ -15,9 +15,11 @@ import pandas as pd
 import numpy as np
 import os 
 import tempfile
+import warnings
+
 from app import app 
 
-
+warnings.filterwarnings("ignore")
 
 import plotly.graph_objects as go 
 from src.visualization import (render_resampled_passanger , 
