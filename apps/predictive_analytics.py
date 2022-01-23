@@ -16,9 +16,9 @@ import numpy as np
 import os 
 import tempfile
 import warnings
-
+import sd_material_ui 
 from app import app 
-
+from sklearn import metrics
 warnings.filterwarnings("ignore")
 
 import plotly.graph_objects as go 
@@ -33,7 +33,8 @@ from src.load_data import transform_dataset
 custom_model_params_style = {'background-color':'#378dfc','color':'#fcfaff','border-radius': '15px','text-align': 'center'}
 
 
-
+# Photo by <a href="https://unsplash.com/@snowjam?utm_source=unsplash&utm_medium=referral&utm_content=creditCopyText">John McArthur</a> on <a href="https://unsplash.com/s/photos/flight?utm_source=unsplash&utm_medium=referral&utm_content=creditCopyText">Unsplash</a>
+  
 
 
 

@@ -1,13 +1,21 @@
+from importlib import reload
 import dash 
 import dash_bootstrap_components as dbc 
 
 from dash import html,Input,Output,State,dcc
 from app import app,server
 
-import stats
-from stats import *
-import predictive_analytics
-from predictive_analytics import * 
+
+from apps import predictive_analytics,project_explanation,stats,api_docs
+from apps.predictive_analytics import * 
+from apps.project_explanation import *
+from apps.stats import *
+import apps.api_docs as api_docs
+from apps.api_docs import * 
+
+
+
+
 
 server = server
 SIDEBAR_STYLE = {
@@ -52,7 +60,9 @@ app.layout = html.Div([dcc.Location(id="url"), sidebar, content])
 @app.callback(Output("page-content", "children"), [Input("url", "pathname")])
 def render_page(pathname) : 
     if pathname == '/' : 
-        return html.A('Still under development')
+        project_explanation.layout = render_project_explanation()
+        return project_explanation.layout
+
     elif pathname == '/stats' : 
         stats.layout = stats.render_statistics()
         return stats.layout
@@ -61,7 +71,8 @@ def render_page(pathname) :
         return predictive_analytics.layout
         
     elif pathname == '/api' : 
-        return html.A('We Are Currently working on this API')
+        api_docs.layout  = api_docs.render_api_docs()
+        return api_docs.layout
     else : 
         return dbc.Jumbotron(
         [
@@ -72,4 +83,4 @@ def render_page(pathname) :
     )
 if __name__ == '__main__' : 
     
-    app.run_server(debug=True)
+    app.run_server(debug=True,port=5555)
