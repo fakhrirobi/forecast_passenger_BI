@@ -1,5 +1,5 @@
 import prepare_data
-
+import os 
 # importing module
 import logging
 from contextlib import contextmanager
@@ -11,7 +11,6 @@ logging.basicConfig(filename="newfile.log",
 logger = logging.getLogger()
 @contextmanager
 def change_path() : 
-    import os 
     prev_cwd = os.getcwd()
     os.chdir('..')
     try : 
@@ -43,5 +42,7 @@ def begin_process() :
     with change_path() : 
         forecast_data.to_csv('forecast_data.csv',index=False)
     logger.info("Finished preparing data for forecast data")
+    
+    
 if __name__ == '__main__' : 
     begin_process()
