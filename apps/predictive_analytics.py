@@ -10,13 +10,12 @@ import statsmodels.formula.api as smf
 import statsmodels.tsa.api as smt
 from  statsmodels.tsa.statespace.sarimax import SARIMAXResults
 from dash_extensions import Download
-from dash_extensions.snippets import send_file
+
 import pandas as pd 
 import numpy as np
 import os 
 import tempfile
 import warnings
-import sd_material_ui 
 from app import app 
 from sklearn import metrics
 warnings.filterwarnings("ignore")
