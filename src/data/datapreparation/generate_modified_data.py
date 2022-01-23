@@ -1,5 +1,5 @@
 import prepare_data
-import os 
+
 # importing module
 import logging
 from contextlib import contextmanager
