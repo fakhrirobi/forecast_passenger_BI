@@ -11,6 +11,7 @@ logging.basicConfig(filename="newfile.log",
 logger = logging.getLogger()
 @contextmanager
 def change_path() : 
+    import os 
     prev_cwd = os.get_cwd()
     os.chdir('..')
     try : 
