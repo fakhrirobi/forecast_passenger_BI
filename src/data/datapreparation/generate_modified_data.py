@@ -12,7 +12,7 @@ logger = logging.getLogger()
 @contextmanager
 def change_path() : 
     import os 
-    prev_cwd = os.get_cwd()
+    prev_cwd = os.getcwd()
     os.chdir('..')
     try : 
         yield
