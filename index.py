@@ -17,7 +17,7 @@ from apps.api_docs import *
 
 
 
-server = server
+server = app.server
 SIDEBAR_STYLE = {
     "position": "fixed",
     "top": 0,
