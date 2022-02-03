@@ -19,6 +19,7 @@ from apps.api_docs import *
 
 
 server = app.server
+#basic styling
 SIDEBAR_STYLE = {
     "position": "fixed",
     "top": 0,
@@ -36,7 +37,7 @@ CONTENT_STYLE = {
     'background-color' : '#f0f3f7'
 
 }
-
+#creating sidebar to access multiple apps
 sidebar = html.Div(
     [
         html.H4("Choose Menu Below : "),
@@ -52,12 +53,12 @@ sidebar = html.Div(
     ],
     style=SIDEBAR_STYLE,
 )
-
+#render selected navbar
 content = html.Div(id="page-content", style=CONTENT_STYLE)
 
 app.layout = html.Div([dcc.Location(id="url"), sidebar, content])
 
-
+#callback to change content based of navbar clicked
 @app.callback(Output("page-content", "children"), [Input("url", "pathname")])
 def render_page(pathname) : 
     if pathname == '/' : 
