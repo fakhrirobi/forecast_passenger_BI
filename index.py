@@ -1,6 +1,7 @@
-from importlib import reload
-import dash 
-import dash_bootstrap_components as dbc 
+#inside index.py 
+#importing all required packages
+import dash #main package 
+import dash_bootstrap_components as dbc #for dash styling 
 
 from dash import html,Input,Output,State,dcc
 from app import app,server

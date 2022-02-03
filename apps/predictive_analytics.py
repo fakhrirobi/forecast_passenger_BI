@@ -1,30 +1,32 @@
+#inside predictive_analytics.py
+#import all required packages
+import dash_bootstrap_components as dbc #bootstrap wrapper for dash 
+from dash import Input, Output, html,dcc # callback component  and  dash component
+import dash_extensions as de # dash community package that has some additional functionality 
+from datetime import date #datetime manipulation 
+from dateutil import relativedelta #counting date range 
 
-import dash_bootstrap_components as dbc 
-from dash import Input, Output, html,dcc,State
-from dash.exceptions import PreventUpdate
-import dash_extensions as de
-from datetime import date
-from dateutil import relativedelta
-import statsmodels.api as sm
-import statsmodels.formula.api as smf
-import statsmodels.tsa.api as smt
-from  statsmodels.tsa.statespace.sarimax import SARIMAXResults
-from dash_extensions import Download
+import statsmodels.api as sm #statsmodels api 
+from  statsmodels.tsa.statespace.sarimax import SARIMAXResults #loading trained models
 
+
+
+#data manipulation 
 import pandas as pd 
 import numpy as np
 import os 
 import tempfile
-import warnings
+
 from app import app 
 from sklearn import metrics
-warnings.filterwarnings("ignore")
-
-import plotly.graph_objects as go 
+#
+import plotly.graph_objects as go #plotting purpose
+#import figure maker 
 from src.visualization import (render_resampled_passanger , 
                                create_acf_pacf_plot, 
                                render_histogram_ts_data, 
                                render_forecast_figure)
+#import transformation function 
 from src.load_data import transform_dataset
 
 
@@ -32,16 +34,24 @@ from src.load_data import transform_dataset
 custom_model_params_style = {'background-color':'#378dfc','color':'#fcfaff','border-radius': '15px','text-align': 'center'}
 
 
-# Photo by <a href="https://unsplash.com/@snowjam?utm_source=unsplash&utm_medium=referral&utm_content=creditCopyText">John McArthur</a> on <a href="https://unsplash.com/s/photos/flight?utm_source=unsplash&utm_medium=referral&utm_content=creditCopyText">Unsplash</a>
+
   
 
 
-
+#creating datepicker for choosing time horizon for forecasting 
 date_picker = dcc.DatePickerSingle(
     id='month_picker',display_format='MMMM-YYYY', date='2016-04-01',placeholder='Select Month to Forecast', 
     clearable=True,min_date_allowed=date(2016, 4, 1),number_of_months_shown=6
 ,style={'background-color':'#378dfc'})
 
+'''
+In this predictive_analytics app i created navbar : 
+1. time_decomposition_page -> timeseries feature EDA
+2. forecast_page -> to create forecast based on choosen time horizon 
+3. custom_model_page -> to create model based on chosen params and directly seee the performance
+
+
+'''
 time_decomposition_page  = dbc.Container(
 
     children= [ 
@@ -70,16 +80,7 @@ forecast_page= dbc.Container(
     id='ForecastPage', 
     children= [
         html.Br(), 
-        dbc.Row(children=[dbc.Col(
-                        dcc.Dropdown(id='Forecast_Menu_Selector', 
-                                     options=[{'label':'Number of Passanger overtime', 'value':'Number of Passanger overtime'}, 
-                                              {'label':'Number of Passanger Based on Region', 'value':'Number of Passanger Based on Region'}, 
-                                              {'label':'Number of Passanger per Airline', 'value':'Number of Passanger per Airline'}], 
-                                              value='Number of Passanger per overtime', placeholder='Select What to Forecast'
-                                              
-                                              
-                                              )
-            ), 
+        dbc.Row(children=[
                 dbc.Col(
                     dbc.Card(
                         children = [ 
@@ -215,10 +216,8 @@ custom_model_page= dbc.Container(
                 id='modelplot_lottie'
             ),style={'background-color':'#ffffff'})
         ),
-        Download(id="download_custom_model"),
  
         html.Br(),
-        dcc.Store(id='store_custom_model'),
         dbc.Container(
             id='content_forecast'
         )
@@ -229,13 +228,13 @@ custom_model_page= dbc.Container(
     ]
 )
 
-
+#render apps page
 def render_predictive_analytics_page() : 
     # lag_slider = dcc.Slider(id='lag_slider', 
     #                     value=12, 
     #                     min=1, 
     #                     max=129)
-    
+    #defining the page 3 tabs pre
     tabs = html.Div(
         [
             dbc.Tabs(className="nav nav-pills nav-fill",children=
@@ -253,7 +252,10 @@ def render_predictive_analytics_page() :
     
     return tabs
 
-
+'''creating callback function two switch between three navbar/ tabs : 1. timeseries_decomposition_page
+    2. forecast_page 
+    3. custom_model_page 
+'''
 @app.callback(Output("content", "children"), [Input("tabs", "active_tab")])
 def tab_navy(pressed_tab):
     if pressed_tab == "tab-1":
@@ -271,39 +273,33 @@ def tab_navy(pressed_tab):
 
 
 
-@app.callback(
-    Output(component_id='content_forecast', component_property='children'), 
-    Input(component_id='Forecast_Menu_Selector',component_property='value')
-)
-def render_forecast_content(what_to_forecast) : 
-    if what_to_forecast == 'Number of Passanger overtime' : 
-        return html.H3('Test 1')  
-    elif what_to_forecast == 'Number of Passanger Based on Region' : 
-        return html.H3('Test 2') 
-    elif what_to_forecast == 'Number of Passanger per Airline' : 
-        return html.H3('Test 3')  
-    
+# callback function to determine the length of forecast horizon based on choosen date ( monthly basis ) from last point (march 2016)
 @app.callback(
     Output(component_id='render_forecast_step',component_property='data'),
     
     Input(component_id='month_picker',component_property='date')
 )
 def get_forecast_step(date_value) : 
-    date_object = date.fromisoformat(date_value)
-    month = date_object.month
-    year = date_object.year
-    to_forecast_date = []
-    # to_forecast_date = date.fromisoformat(f'{year}-0{month}-01') if int(month) <10 else date.fromisoformat(f'{year}-{month}-01')
+    #extracting string of date_value from component with id month_picker
+    date_object = date.fromisoformat(date_value) #converting from str to datetime 
+    month = date_object.month #extract the number of month
+    year = date_object.year #extract the number of year 
+    to_forecast_date = [] #create empty list to contain datetime index 
+    
+    
+    #logic for determining datetime
     if month < 10 : 
         to_forecast_date.append(date.fromisoformat(f'{year}-0{month}-01') )
     elif month >= 10 : 
         to_forecast_date.append(date.fromisoformat(f'{year}-{month}-01') )
     last_date = date.fromisoformat('2016-03-01')
+    #counting the length of forecast 
     diff = relativedelta.relativedelta(to_forecast_date[0], last_date)
     forecast_step = diff.months + diff.years * 12
-    #create function to load model 
     return forecast_step
 
+
+#callback function to forecast based on forecast step callback function 
 @app.callback(
     Output(component_id='render_forecast_result',component_property='figure'),
     Input(component_id='render_forecast_step',component_property='data'), 
@@ -318,8 +314,12 @@ def forecast_timeseries_data(forecast_step,window_size) :
     forecast_result  = loaded_model.forecast(steps=forecast_step)
     #store result in a variable 
     
+    #display forecast value
     figure = render_forecast_figure(forecast_result,window_size)
     return figure
+
+
+#callback function to store custom sarimax model params and then stored the variable to dash core component : dcc.store
 @app.callback(
     Output(
         component_id='AR_slider_pick',component_property='children'
@@ -331,7 +331,7 @@ def AR_Slider_pick(AR_value) :
     
     return f'{AR_value}',AR_value
 
-
+#callback function to store custom sarimax model params and then stored the variable to dash core component : dcc.store
 @app.callback(
     Output(
         component_id='MA_slider_pick',component_property='children'
@@ -343,7 +343,7 @@ def MA_Slider_pick(MA_VALUE) :
     
     return f'{MA_VALUE}',MA_VALUE
 
-
+#callback function to store custom sarimax model params and then stored the variable to dash core component : dcc.store
 @app.callback(
     Output(
         component_id='d_slider_pick',component_property='children'
@@ -355,7 +355,7 @@ def d_Slider_pick(d_order) :
     
     return f'{d_order}',d_order
 
-
+#callback function to store custom sarimax model params and then stored the variable to dash core component : dcc.store
 @app.callback(
     Output(
         component_id='seasonalAR_slider_pick',component_property='children'
@@ -367,7 +367,7 @@ def SeasonalAR_Slider_pick(seasonalAR_value) :
     
     return f'{seasonalAR_value}',seasonalAR_value
 
-
+#callback function to store custom sarimax model params and then stored the variable to dash core component : dcc.store
 @app.callback(
     Output(
         component_id='seasonalMA_slider_pick',component_property='children'
@@ -379,7 +379,7 @@ def SeasonalMA_Slider_pick(seasonalMA_VALUE) :
     
     return f'{seasonalMA_VALUE}',seasonalMA_VALUE
 
-
+#callback function to store custom sarimax model params and then stored the variable to dash core component : dcc.store
 @app.callback(
     Output(
         component_id='seasonald_slider_pick',component_property='children'
@@ -391,7 +391,7 @@ def Seasonald_Slider_pick(seasonald_order) :
     
     return f'{seasonald_order}',seasonald_order
 
-
+#callback function to store custom sarimax model params and then stored the variable to dash core component : dcc.store
 @app.callback(
     Output(
         component_id='seasonalPeriodicity_slider_pick',component_property='children'
@@ -403,21 +403,14 @@ def Seasonald_Periodicity_pick(periodicity) :
     
     return f'{periodicity}',periodicity
 
-@app.callback(
-    Output(component_id='download content',component_property='data'), 
-    Input(component_id='download_cs_model',component_property='n_clicks'),
-    Input(component_id='store_custom_model',component_property='data')
-)
-def download_custom_model(button_click,file) : 
-    if button_click : 
-        dcc.send_file(file)  
 
+
+#callback function to create custom model 
 @app.callback(
     [Output(component_id='modelplot_lottie',component_property='children'), 
     Output(component_id='MAE Score',component_property='children'), 
     Output(component_id='RMSE Score',component_property='children'), 
     Output(component_id='MAPE Score',component_property='children')],
-    #Output(component_id='store_custom_model',component_property='data')],
     [Input(component_id='AR_value',component_property='data'),
     Input(component_id='MA_value',component_property='data'),
     Input(component_id='d_value',component_property='data'),
@@ -428,19 +421,23 @@ def download_custom_model(button_click,file) :
     Input(component_id='start_train_model_btn',component_property='n_clicks')],suppress_callback_exceptions=True
 )
 def train_custom_model(p,d,q,P,D,Q,s,button_click) : 
+    #logic if button trigerred it will start the training process
     if button_click is not None: 
         from sklearn import metrics 
         
         data = pd.read_csv('src/data/passanger_total.csv',index_col='Period',parse_dates=['Period'])
         data = transform_dataset(data=data)
         print(data.columns)
+        #feed the model with stored params in dcc.Store
         model = sm.tsa.SARIMAX(data['moving_avg_diff'], order=(p,d,q),
                                 seasonal_order=(P,D,Q,s)
                         )
+        #fitting model 
         results = model.fit()
         
         yhat = results.fittedvalues
         
+        #creating figure to show model performance
         figure = go.Figure()
         figure.add_trace(
             go.Scatter(x=data.index,y=data['moving_avg_diff'],name='original values')
@@ -450,28 +447,25 @@ def train_custom_model(p,d,q,P,D,Q,s,button_click) :
         )
         figure.update_layout(title='Custom Model Results')
         
+        #display error metrics
         MAE_ = metrics.mean_absolute_error(data['moving_avg_diff'],yhat)
         RMSE_  = metrics.mean_squared_error(data['moving_avg_diff'],yhat)
         MAPE_ = metrics.mean_absolute_percentage_error(data['moving_avg_diff'],yhat)
         print(MAPE_)
         print(MAE_)
         print(RMSE_)
-        tempdir = tempfile.mkdtemp()
-        # filename = os.path.join('custom_model.pkl')
-        results.save('custom_model.pkl')
+
+        #show the figure in a container
         graph = dbc.Container(children=[dbc.Row(dcc.Graph(id='plot_custom_model',figure=figure)), 
                                         html.Br()
                                         ])
-        import pickle 
-        with open('custom_model.pkl', 'rb') as pickle_file:
-            content = pickle.load(pickle_file)
-        print(type(content))
-        
+
         
         
         return graph,f'{MAE_}', f'{RMSE_}',f'{MAPE_}'
     
     else : 
+        #if the button is not clicked the rendered component would be lottie sticker
         options = dict(loop=True, autoplay=True, rendererSettings=dict(preserveAspectRatio='xMidYMid slice'))
         lottie_url = 'https://assets3.lottiefiles.com/datafiles/bEYvzB8QfV3EM9a/data.json'
         lottie_gif = dbc.Row(children=[html.Br(),html.Br(),html.H3('You Have Not Enter The Model Params',style={'text-align': 'center','color':'#e60b16'}),
@@ -481,12 +475,3 @@ def train_custom_model(p,d,q,P,D,Q,s,button_click) :
     
 
 
-# @app.callback(
-#     Output(component_id='download_custom_model',component_property=''),
-#     Input(component_id='',component_property=''), 
-#     State(component_id='',component_property='')
-        
-#     )
-
-# def download_custom_file() : 
-#     send_file("custom_model.png")

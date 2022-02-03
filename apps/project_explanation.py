@@ -4,7 +4,7 @@ import dash_bootstrap_components as dbc
 
 md_docs = ''' 
 #####   PROJECT EXPLANATION 
-
+---
 
 This project used Airport passenger of San Fransisco Airport from 2005 to 2016
  
@@ -17,7 +17,7 @@ This Project was created to aim these following objectives :
 - Create **[API](https://flightpassangerforecast.herokuapp.com/docs)** for forecasting number of passenger of given period
     
 ##### PROJECT WORKFLOW 
-
+___
 1. Data Cleaning (notebook : )
 2. Data Exploration 
 3. Creating Forecast Model 
@@ -26,7 +26,10 @@ This Project was created to aim these following objectives :
 6. Creating API
 7. Deploy both on heroku 
 
-#### Package / Tech Stack Used  
+#### Package / Tech Stack Used 
+
+---
+
 - Dashboard Development : 
     1. Dash 
     2. Dash Bootstrap Component 
@@ -42,6 +45,7 @@ This Project was created to aim these following objectives :
     1. Heroku 
     
 #### FUTURE PLANS 
+---
 - Time Series Model Development 
     1. Use Deep Learning, Supervised ML, 
     2. Pandas 
@@ -61,9 +65,9 @@ This Project was created to aim these following objectives :
 
 
 #### INSTALLATION 
-
+---
 #### Modelling Result 
-
+---
 
 
 

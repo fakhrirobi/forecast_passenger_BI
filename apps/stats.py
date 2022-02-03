@@ -1,39 +1,36 @@
-import dash_bootstrap_components as dbc 
-from dash import Input,Output,State,dcc
-from dash import html
-from dash_bootstrap_components._components.CardBody import CardBody
-import joblib
+#inside stats.py 
+#import all required packages 
+
+import dash_bootstrap_components as dbc #implementation of bootstrap element in dash 
+from dash import Input,Output,dcc # for callback function 
+from dash import html # dash wrapper for html component 
+
+import joblib # for loading variable option for dropdown menu 
 import numpy as np 
-from app import app
-time_url  = 'https://assets3.lottiefiles.com/packages/lf20_qwATcU.json'
+from app import app  #importing Dash instance from app.py 
+
+
 
 stats_basic_container_style = {'background-color':'#378dfc','color':'#fcfaff','text-align': 'center'}
 
-import dash_extensions as de
-options = dict(loop=True, autoplay=True, rendererSettings=dict(preserveAspectRatio='xMidYMid slice'))
-#calling object 
+
+#reading all options that will be rendered 
 year_list = joblib.load('joblib_file_ref/list_year.joblib')
 geo = joblib.load('joblib_file_ref/geo_region.joblib')
 operating_airline  = joblib.load('joblib_file_ref/operating_airline.joblib')
-# year_list.append('All')
+
+#importing all figure maker from src.visualization.py 
 from src.visualization import (render_passenger_airlines,
                                render_passenger_overtime,
                                render_passenger_region, 
                                cagr_passanger_overtime,cagr_passanger_per_airlines,cagr_passanger_per_region) 
 
 
-# SELECT_YEAR_STYLE = {
 
-
-#     "padding": "2rem 1rem",
-#     "background-color": "#7af5f1",
-
-# }
-# //TODO : add multipage layout 
 #https://stackoverflow.com/questions/66069304/run-multiple-dash-apps-with-serve-layout-functions 
 
 
-
+#creating dropdown menu for user input
 operating_airlines_dropdown = dcc.Dropdown(
                                             id='airline_select', options= [
                                                 {'label': airline, 'value': airline} for airline in operating_airline
@@ -47,7 +44,7 @@ region_dropdown = dcc.Dropdown(
                                 ], value= geo[0],placeholder="Select a region")
                                 
                             
-    
+#render statistics page layout
 def render_statistics() : 
     select_year = html.Div(dbc.Card([html.H4('Select Range Year : ',className='card-title text-center'),
                                       dcc.RangeSlider(id='year-select',
@@ -147,7 +144,7 @@ def render_statistics() :
     )
     
     return page
-
+#callback to adjust timerange in rendering passenger overtime
 @app.callback(
     [Output(component_id='passenger_overtime',component_property='figure'),
      Output(component_id='passenger_overtime_card_title',component_property='children')],
@@ -157,6 +154,9 @@ def update_passanger_overtime(year_range) :
     text = f'Total Passanger from {year_range[0]} to {year_range[1]}'
     return render_passenger_overtime(range=year_range),text
 
+
+
+#callback to adjust timerange in rendering total passenger based on region 
 @app.callback(
     [Output(component_id='passenger_region',component_property='figure'),
      Output(component_id='passenger_region_card_title',component_property='children')],
@@ -166,6 +166,8 @@ def update_passenger_region(year_range) :
     text = f'Total Passanger per Region  from {year_range[0]} to {year_range[1]}'
     
     return render_passenger_region(range=year_range),text
+
+#callback to adjust timerange in rendering total passenger based on selected airlines 
 @app.callback(
     [Output(component_id='passenger_airlines',component_property='figure'),
      Output(component_id='passenger_airlines_card_title',component_property='children')],
@@ -178,6 +180,8 @@ def update_passenger_airlines(year_range) :
     return render_passenger_airlines(range=year_range),text
 
 
+
+#callback to count cagr of overtime passenger based on chosen timerange
 @app.callback(
     [Output(component_id='metrics_overall_passanger_growth_header',component_property='children'),
      Output(component_id='metrics_overall_passanger_growth',component_property='children')],
@@ -189,6 +193,8 @@ def update_cagr_passanger_overtime(year_range) :
     
     return header_text,result
 
+
+#callback to count cagr on total passenger per airlines based on chosen timerange
 @app.callback(
     [Output(component_id='metrics_airlines_passanger_growth_header',component_property='children'),
      Output(component_id='metrics_airlines_passanger_growth',component_property='children')],
@@ -201,7 +207,7 @@ def update_cagr_passanger_airlines(year_range,airline) :
     
     return header_text,result
 
-
+#callback to count cagr on total passenger per region  based on chosen timerange
 @app.callback(
     [Output(component_id='metrics_region_passanger_growth_header',component_property='children'),
      Output(component_id='metrics_region_passanger_growth',component_property='children')],

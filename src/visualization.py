@@ -271,7 +271,6 @@ def render_forecast_figure(forecast_result,window_size) :
     window_size = int(window_size)
     def transform_moving_avg_diff(forecast_result,window_size,num_month=12,origin_data=origin_data) : 
         clone_original_data = origin_data.copy()
-        clone_original_data.to_csv('x.csv')
         import math 
         #len checking of forecast_result if result only contain 1 : 
         temp_data = pd.DataFrame(data={'Period':[],'Passenger Total' : []})
@@ -323,7 +322,6 @@ def render_forecast_figure(forecast_result,window_size) :
             
             # append directly to the dataset 
             append_df = pd.DataFrame(data={'Period':[pd.to_datetime(date_str)],'Passenger Total' : [transformed_value]})
-            append_df.to_csv('inspact.csv')
             # clone_original_data.append(append_df)
             clone_original_data = pd.concat([clone_original_data,append_df],axis=0)
             
