@@ -1,10 +1,11 @@
-from datetime import date
-import plotly.express as px
-import plotly.graph_objects as go 
-import pandas as pd 
-import numpy as np 
-from statsmodels.tsa.stattools import pacf, acf 
-from plotly.subplots import make_subplots
+#insied visualization.py
+#import all required packages
+from datetime import date 
+import plotly.express as px #plotting purpose
+import plotly.graph_objects as go #plotting purpose
+import pandas as pd #data manipulation 
+import numpy as np #daa manipulation 
+from statsmodels.tsa.stattools import pacf, acf #for autocorrelation purpose
 
 
 #naming convention 
@@ -16,6 +17,7 @@ render_annual_timedata
 #standardize color : #7febf5
 
 '''
+#function to load and modified data -> converting several values 
 def load_data() : 
     data = pd.read_csv('src/data/Air_Traffic_Passenger_Statistics.csv')
     data = data.replace('United Airlines - Pre 07/01/2013', 'United Airlines')
@@ -39,15 +41,17 @@ def load_data() :
 
 data = load_data()
 
+
+#calcualte cagr
 def cagr_passanger_overtime(range,data=data) : 
     data['year'] = data.Period.dt.year
     # passanger_count_group_overtime = data.groupby([ 'Period']).agg(**{'Passenger Total': ('Passenger Count', 'sum')}).reset_index()
     # passanger_count_group_overtime['year'] = passanger_count_group_overtime.Period.year
-    year_group = data.groupby([ 'year']).agg(**{'Passenger Annual': ('Passenger Count', 'sum')}).reset_index()    
-    begin_year = int(range[0])
+    year_group = data.groupby([ 'year']).agg(**{'Passenger Annual': ('Passenger Count', 'sum')}).reset_index()    #aggregate first per year
+    begin_year = int(range[0]) #year range
     end_year = int(range[1])
-    begin_val = year_group.loc[year_group.year==begin_year,'Passenger Annual'].sum()
-    end_val = year_group.loc[year_group.year==end_year,'Passenger Annual'].sum()
+    begin_val = year_group.loc[year_group.year==begin_year,'Passenger Annual'].sum() #sum the beginning year value
+    end_val = year_group.loc[year_group.year==end_year,'Passenger Annual'].sum() #sum the final  year value
     distance_year = end_year - begin_year
     cagr = np.round((((end_val / begin_val)**(1/float(distance_year))) -1) *100,2)
     return cagr
@@ -55,14 +59,16 @@ def cagr_passanger_overtime(range,data=data) :
 def render_passenger_overtime(range,data=data) : 
     passanger_count_group_overtime = data.groupby([ 'Period']).agg(**{'Passenger Total': ('Passenger Count', 'sum')}).reset_index()
     
-    # passanger_count_group_overtime.set_index('Period',inplace=True)
+    #filter date based on rangeselector value
     filter_date = (passanger_count_group_overtime.set_index('Period').index.year >= range[0] ) & (passanger_count_group_overtime.set_index('Period').index.year <= range[1]) 
     passanger_count_group_overtime = passanger_count_group_overtime.loc[filter_date]
 
+    ##render the filtered data
     fig1 = px.line(passanger_count_group_overtime.sort_values(by=['Period'], ascending=[True]), x='Period', y='Passenger Total', title='Total Passenger Monthly', template='seaborn')
     fig2 = px.scatter(passanger_count_group_overtime, x='Period', y='Passenger Total', title='Total Passenger Monthly', template='plotly_white')
     fig1.update_traces(line=dict(color = '#050505'))
     fig2.update_traces(line=dict(color = '#050505'))
+    #combining two figures
     compiled_figure = go.Figure(data=fig1.data + fig2.data)
 
     compiled_figure.update_layout(
@@ -126,6 +132,7 @@ def render_passenger_airlines(range,data=data) :
     passanger_count_group_airlines['pct'] = (passanger_count_group_airlines['Passenger_Total'] / total_passanger) * 100 
     pct = passanger_count_group_airlines['pct'].to_list()
     number_passanger = passanger_count_group_airlines['Passenger_Total'].to_list()
+    # to render the text value of tree map we need to create column stack 
     fig_airlines.data[0].customdata = np.column_stack([number_passanger, pct])
     fig_airlines.data[0].texttemplate = "<br>Passanger: %{value:,} <br>Share : %{customdata[1]:.2f}% "
 
@@ -153,7 +160,9 @@ def render_passenger_airlines(range,data=data) :
 #========================================PREDICTIVE ANALYTICS PAGE 
 
 passanger_data = pd.read_csv('src/data/passanger_total.csv',index_col='Period',parse_dates=['Period'])
+
 def render_resampled_passanger(data = passanger_data) : 
+    #return resampled data by month 
     data = data[['Passenger Total']].resample('AS').sum()
     fig = px.line(data.sort_values(by=['Period'], ascending=[True]).reset_index(), x='Period', y='Passenger Total', template='seaborn', title='San Fransisco Airport Total Passenger ( Annually Resampled)')
     fig.update_xaxes(title_text='Year')
@@ -341,21 +350,8 @@ def render_forecast_figure(forecast_result,window_size) :
         y=transformed_forecast_data['Passenger Total'], x = transformed_forecast_data.Period,name='Forecast'
     ))
     figure.update_layout(title='Forecast Result ')
-    # figure1 = px.line(y=origin_data['Passenger Total'], x = origin_data.Period,template='seaborn')
-    # figure2 = px.line(y=transformed_forecast_data['Passenger Total'], x = transformed_forecast_data.Period,template='seaborn')
-    # figure1.update_traces(line=dict(color = '#45edea'))
-    # figure1['data'][0]['name'] = 'Real Values'
-    # figure2['data'][0]['name'] = 'Forecast Values'
-    # figure2.update_traces(line=dict(color = '#e245ed'))
-    # figure3 = px.scatter(y=origin_data['Passenger Total'], x = origin_data.Period,template='seaborn')
-    # figure4 = px.scatter(y=transformed_forecast_data['Passenger Total'], x = transformed_forecast_data.Period,template='seaborn')
-    # figure3.update_traces(line=dict(color = '#e67076'))
-    # figure4.update_traces(line=dict(color = '#661ced'))
-    # figure = go.Figure(data=figure1.data+figure2.data+figure3.data+figure4.data)
+
     
     
     return figure
 
-
-                    #after append the real value we need to run rolling mean
-    #importing transform function 
