@@ -2,7 +2,7 @@
 
 
 ### :bar_chart: CREATING AIR FLIGHT PASSENGER BUSINESS INTELLIGENCE DASHBOARD
-#####   PROJECT EXPLANATION 
+#####  :pencil2:  PROJECT EXPLANATION 
 ---
 
 
@@ -16,7 +16,7 @@ This Project was created to aim these following objectives :
 - Create **[Business Intelligence Dashboard](https://github.com/fakhrirobi/forecast_passenger_BI)** .
 - Create **[API](https://flightpassangerforecast.herokuapp.com/docs)** for forecasting number of passenger of given period
     
-##### PROJECT WORKFLOW 
+##### :pencil2: PROJECT WORKFLOW 
 ---
 1. Dataset Exploration 
 2. Chart Exploration 
@@ -24,7 +24,7 @@ This Project was created to aim these following objectives :
 4. Creating Dashboard
 5. Deploy both on heroku 
 
-#### Package / Tech Stack Used  
+#### :wrench: Package / Tech Stack Used  
 ---
 - Dashboard Development : 
     1. Dash
@@ -32,16 +32,12 @@ This Project was created to aim these following objectives :
     3. Dash Extention -> for lottie sticker
     4. Plotly -> creating figure 
    
-- Time Series Model Development 
-    1. statsmodels -> forecasting model 
-    2. Pandas 
-    3. Numpy
    
    
 - Deployment : 
     1. Heroku 
     
-#### FUTURE PLANS 
+#### :hourglass: FUTURE PLANS 
 ---
 - Time Series Model Development 
     1. Use Deep Learning, Supervised ML, 
@@ -62,14 +58,14 @@ This Project was created to aim these following objectives :
     4. Implement Testing 
 
 
-#### FINAL PRODUCT 
+#### :gem: FINAL PRODUCT 
 
 You can access the webapp in : https://dashboardpassenger.herokuapp.com/
 
 Snapshot of the app : 
 !['gif gile of the display of the dashboard'](https://github.com/fakhrirobi/forecast_passenger_BI/blob/main/demo/demo.gif)
 
-#### INSTALLATION 
+#### :hammer: INSTALLATION 
 ---
 ```python
 #clone the repository first 
@@ -83,7 +79,7 @@ Snapshot of the app :
 #run index.py 
     python index.py 
 ```
-#### Modelling Result 
+#### :green_book: Modelling Result 
 
 |    |     RMSE Score |       MAE Score |   MAPE Score | model_name                                               |
 |---:|---------------:|----------------:|-------------:|:---------------------------------------------------------|
@@ -104,7 +100,7 @@ Snapshot of the app :
 
 
 ..
-#### ODDS 
+#### :email: Connect With Me 
 ---
 Dashboard Development : 
 
